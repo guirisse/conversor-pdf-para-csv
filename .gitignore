@@ -1,0 +1,8 @@
+.env
+venv/
+notas_fiscais/
+.vscode
+__pycache__/
+.ipynb_checkpoints/
+bases_csv/
+extratorpdf.ipynb
