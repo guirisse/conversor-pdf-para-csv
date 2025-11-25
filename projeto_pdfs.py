@@ -122,6 +122,9 @@ def processar_pdfs_para_csv(lista_de_arquivos_pdf):
 
 def gerar_previews(lista_de_arquivos):
 
+    if not lista_de_arquivos:
+        return []
+
     carrossel = []
     
     for arquivo in lista_de_arquivos:
@@ -136,7 +139,7 @@ def gerar_previews(lista_de_arquivos):
         doc.close()
     return carrossel
 
-with gr.Blocks(gr.themes.Soft(primary_hue=gr.themes.colors.red,secondary_hue=gr.themes.colors.red,font=gr.themes.GoogleFont("Roboto")), css="style.css") as demo:
+with gr.Blocks(gr.themes.Soft(primary_hue=gr.themes.colors.red,secondary_hue=gr.themes.colors.red,font=gr.themes.GoogleFont("Roboto"))) as demo:
     
     gr.Markdown("# Extrator de dados de Notas Fiscais")
     
@@ -181,7 +184,7 @@ with gr.Blocks(gr.themes.Soft(primary_hue=gr.themes.colors.red,secondary_hue=gr.
                         dataframe_output = gr.Dataframe(
                             label="Tabela de Dados",
                             interactive=False,
-                            wrap=True
+                            wrap=False
                         )
 
             pdf_input.change(
