@@ -10,11 +10,13 @@ CAMPOS A EXTRAIR (Manter a ordem e os nomes exatos):
     'numero_da_nota',
     'emitente',
     'nome_do_destinatario',
+    'itens'
+    'subtotal_da_nota',
     'icms',
     'ipi',
     'total_da_nota',
-    'subtotal_da_nota',
-    'itens'
+    'icms_valido',  
+    'ipi_valido'
 
 CAMPOS DE ITENS (Nível de Linha):
 A nota pode ter um ou mais itens. Você deve criar um ARRAY JSON chamado 'itens'.

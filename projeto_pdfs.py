@@ -53,7 +53,7 @@ def calcular_ipi(subtotal, valor_ipi):
 def processar_pdfs_para_csv(lista_de_arquivos_pdf):
 
     lista_de_dataframes = []      
-    lista_final_jsons = []
+    json_gradio = []
     
     for file_obj in lista_de_arquivos_pdf:
         pdf_path = file_obj.name
@@ -65,6 +65,8 @@ def processar_pdfs_para_csv(lista_de_arquivos_pdf):
         json_pdf_limpo = limpar_json(json_pdf)   
 
         dados_json = json.loads(json_pdf_limpo)
+
+        json_gradio.append(dados_json)
 
         base_calculo = float(dados_json.get('subtotal_da_nota', '0'))
         val_icms = float(dados_json.get('icms', '0'))
@@ -84,8 +86,6 @@ def processar_pdfs_para_csv(lista_de_arquivos_pdf):
         dados_json['v_unitario'] = ", ".join(valores)
         
         dados_json.pop('itens', None)
-
-        lista_final_jsons.append(dados_json)
         
         df_individual = pd.json_normalize(
             [dados_json], 
@@ -93,15 +93,15 @@ def processar_pdfs_para_csv(lista_de_arquivos_pdf):
                 'numero_da_nota',
                 'emitente',
                 'nome_do_destinatario',
+                'descricao_do_item',
+                'quantidade',
+                'v_unitario',
+                'subtotal_da_nota',
                 'icms',
                 'ipi',
                 'total_da_nota',
-                'subtotal_da_nota',
                 'icms_valido',  
                 'ipi_valido',
-                'descricao_do_item',
-                'quantidade',
-                'v_unitario'
             ],
             errors='ignore'  
         )
@@ -118,7 +118,7 @@ def processar_pdfs_para_csv(lista_de_arquivos_pdf):
         sep=';' 
     )
         
-    return csv_file_path, df_final_combinado, lista_final_jsons
+    return csv_file_path, df_final_combinado, json_gradio
 
 def gerar_previews(lista_de_arquivos):
 
@@ -136,7 +136,7 @@ def gerar_previews(lista_de_arquivos):
         doc.close()
     return carrossel
 
-with gr.Blocks(gr.themes.Soft(primary_hue=gr.themes.colors.red,secondary_hue=gr.themes.colors.red,font=gr.themes.GoogleFont("Roboto")), css="style.css") as demo:
+with gr.Blocks(gr.themes.Soft(primary_hue=gr.themes.colors.red,secondary_hue=gr.themes.colors.red,font=gr.themes.GoogleFont("Roboto"))) as demo:
     
     gr.Markdown("# Extrator de dados de Notas Fiscais")
     
@@ -160,7 +160,7 @@ with gr.Blocks(gr.themes.Soft(primary_hue=gr.themes.colors.red,secondary_hue=gr.
                         label="Insira seus PDFs aqui",
                         file_types=[".pdf"],
                         file_count="multiple",
-                        height=200
+                        height=250
                         )                                          
                     botao_processar = gr.Button("Processar PDFs", variant="primary")    
 
@@ -180,8 +180,7 @@ with gr.Blocks(gr.themes.Soft(primary_hue=gr.themes.colors.red,secondary_hue=gr.
                 with gr.Column(scale=1):
                         dataframe_output = gr.Dataframe(
                             label="Tabela de Dados",
-                            interactive=False,
-                            wrap=True
+                            interactive=False
                         )
 
             pdf_input.change(
