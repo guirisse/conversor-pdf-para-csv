@@ -9,7 +9,7 @@ Utilizando a API do Google Gemini 2.5 flash-lite, o sistema é capaz de ler e in
 ## Funcionalidades
 
 - Extração via GenAI: Utiliza LLMs para interpretar o contexto da nota.
-- Processamento em Lote Capacidade de ler múltiplos arquivos PDF de uma pasta simultaneamente.
+- Processamento em Lote: Capacidade de ler múltiplos arquivos PDF de uma pasta simultaneamente.
 - Tratamento de Dados:
   - Normalização de valores monetários.
   - Validação básica de impostos (ICMS/IPI).
