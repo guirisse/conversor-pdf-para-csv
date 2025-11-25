@@ -224,3 +224,5 @@ with gr.Blocks(gr.themes.Soft(primary_hue=gr.themes.colors.red,secondary_hue=gr.
         inputs=[pdf_input],
         outputs=[csv_output]
     )
+
+    demo.launch(share=False)   
