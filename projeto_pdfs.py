@@ -53,6 +53,7 @@ def calcular_ipi(subtotal, valor_ipi):
 def processar_pdfs_para_csv(lista_de_arquivos_pdf):
 
     lista_de_dataframes = []      
+    lista_final_jsons = []
     
     for file_obj in lista_de_arquivos_pdf:
         pdf_path = file_obj.name
@@ -83,6 +84,8 @@ def processar_pdfs_para_csv(lista_de_arquivos_pdf):
         dados_json['v_unitario'] = ", ".join(valores)
         
         dados_json.pop('itens', None)
+
+        lista_final_jsons.append(dados_json)
         
         df_individual = pd.json_normalize(
             [dados_json], 
@@ -115,7 +118,7 @@ def processar_pdfs_para_csv(lista_de_arquivos_pdf):
         sep=';' 
     )
         
-    return csv_file_path
+    return csv_file_path, df_final_combinado, lista_final_jsons
 
 def gerar_previews(lista_de_arquivos):
 
@@ -133,51 +136,63 @@ def gerar_previews(lista_de_arquivos):
         doc.close()
     return carrossel
 
-with gr.Blocks(gr.themes.Soft(primary_hue=gr.themes.colors.red,secondary_hue=gr.themes.colors.red,font=gr.themes.GoogleFont("Roboto"))) as demo:
+with gr.Blocks(gr.themes.Soft(primary_hue=gr.themes.colors.red,secondary_hue=gr.themes.colors.red,font=gr.themes.GoogleFont("Roboto")), css="style.css") as demo:
     
     gr.Markdown("# Extrator de dados de Notas Fiscais")
     
-    with gr.Row():
-        galeria_output = gr.Gallery(
-            label="Pré-visualização dos arquivos",
-            show_label=True,
-            columns=[3],      # Quantas miniaturas por linha
-            rows=[1],
-            object_fit="contain", # Garante que a nota apareça inteira
-            height="auto",
-            allow_preview=True,   # Permite clicar para ver grande
-            preview=True          # Já tenta mostrar um destaque se possível
-        )
-
-    with gr.Row():
-        
-        with gr.Column(scale=1):
-            pdf_input = gr.File(
-                label="Faça o upload dos PDFs aqui",
-                file_types=[".pdf"],
-                file_count="multiple",
-                height=250
-            )
+    with gr.Tabs():
             
-            botao = gr.Button("Processar PDFs", variant="primary")
+        with gr.TabItem("Upload e Processamento"):               
+            with gr.Row():
+                galeria_output = gr.Gallery(
+                        label="Pré-visualização dos arquivos",
+                        show_label=True, # Fica mais limpo sem label repetida
+                        columns=[4],
+                        rows=[1],
+                        object_fit="contain", # Zoom para leitura do cabeçalho
+                        height="auto",
+                        allow_preview=True,
+                        preview=True
+                    )
+            with gr.Row():
+                with gr.Column(scale=1):
+                    pdf_input = gr.File(
+                        label="Insira seus PDFs aqui",
+                        file_types=[".pdf"],
+                        file_count="multiple",
+                        height=200
+                        )                                          
+                    botao_processar = gr.Button("Processar PDFs", variant="primary")    
 
-        with gr.Column(scale=1):   
-            csv_output = gr.File(
-                label="Baixar planilha consolidada",
-                interactive=False,
-                height=250
-            )
+                with gr.Column(scale=1):
+                    csv_output = gr.File(
+                        label="Baixar Planilha Consolidada",
+                        interactive=False,
+                        height=250
+                        )
 
-    pdf_input.change(
-        fn=gerar_previews,
-        inputs=[pdf_input],
-        outputs=[galeria_output]
-    )
-    
-    botao.click(
-        fn=processar_pdfs_para_csv,
-        inputs=[pdf_input],
-        outputs=[csv_output]
-    )
+        with gr.TabItem("Visualização Detalhada"):             
+            with gr.Row():
+                with gr.Column(scale=1):
+                        json_output = gr.JSON(
+                            label="JSON Estruturado",
+                        )                   
+                with gr.Column(scale=1):
+                        dataframe_output = gr.Dataframe(
+                            label="Tabela de Dados",
+                            interactive=False,
+                            wrap=True
+                        )
 
+            pdf_input.change(
+                fn=gerar_previews,
+                inputs=[pdf_input],
+                outputs=[galeria_output]
+        )
+        
+            botao_processar.click(
+                fn=processar_pdfs_para_csv,
+                inputs=[pdf_input],
+                outputs=[csv_output, dataframe_output, json_output]
+        )
     demo.launch(share=False)   
