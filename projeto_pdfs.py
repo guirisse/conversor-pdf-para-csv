@@ -95,8 +95,8 @@ def processar_pdfs_para_csv(lista_de_arquivos_pdf):
                 'nome_do_destinatario',
                 'icms',
                 'ipi',
+                'subtotal_da_nota',                
                 'total_da_nota',
-                'subtotal_da_nota',
                 'icms_valido',  
                 'ipi_valido',
                 'descricao_do_item',
@@ -138,6 +138,18 @@ def gerar_previews(lista_de_arquivos):
             
         doc.close()
     return carrossel
+
+def limpar_outputs_se_vazio(lista_arquivos):
+    """
+    Se o usuário limpar o upload, limpa os outputs.
+    Se o usuário adicionar arquivos, não faz nada (gr.skip) com os outputs de dados.
+    """
+    if not lista_arquivos:
+        # Retorna None para: CSV, DataFrame e JSON
+        return None, None, None
+    
+    # Se tem arquivos, não mexe nesses componentes (espera o botão processar)
+    return gr.skip(), gr.skip(), gr.skip()
 
 with gr.Blocks(gr.themes.Soft(primary_hue=gr.themes.colors.red,secondary_hue=gr.themes.colors.red,font=gr.themes.GoogleFont("Roboto"))) as demo:
     
@@ -193,6 +205,12 @@ with gr.Blocks(gr.themes.Soft(primary_hue=gr.themes.colors.red,secondary_hue=gr.
                 outputs=[galeria_output]
         )
         
+            pdf_input.change(
+            fn=limpar_outputs_se_vazio,
+            inputs=[pdf_input],
+            outputs=[csv_output, dataframe_output, json_output]
+        )
+                
             botao_processar.click(
                 fn=processar_pdfs_para_csv,
                 inputs=[pdf_input],

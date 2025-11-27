@@ -12,8 +12,8 @@ CAMPOS A EXTRAIR (Manter a ordem e os nomes exatos):
     'nome_do_destinatario',
     'icms',
     'ipi',
+    'subtotal_da_nota',    
     'total_da_nota',
-    'subtotal_da_nota',
     'itens'
 
 CAMPOS DE ITENS (Nível de Linha):
