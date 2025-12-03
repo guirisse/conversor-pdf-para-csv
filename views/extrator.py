@@ -2,6 +2,7 @@ import streamlit as st
 from fonte import processar_pdfs_para_csv 
 import fitz
 from PIL import Image
+from fonte import resetar_tudo
 
 st.title("Upload e Processamento")
 
@@ -9,12 +10,6 @@ if 'arquivos_cache' not in st.session_state:
     st.session_state['arquivos_cache'] = None
 if 'uploader_key' not in st.session_state:
     st.session_state['uploader_key'] = 0
-
-def resetar_tudo():
-    st.session_state['arquivos_cache'] = None
-    st.session_state['df_resultado'] = None
-    st.session_state['json_resultado'] = None
-    st.session_state['uploader_key'] += 1 
 
 uploads = st.session_state['arquivos_cache']
 

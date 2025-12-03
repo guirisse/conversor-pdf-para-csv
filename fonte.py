@@ -54,6 +54,12 @@ def calcular_ipi(subtotal, valor_ipi):
         return 'Correto'
     else:
         return 'Incorreto'
+    
+def resetar_tudo():
+    st.session_state['arquivos_cache'] = None
+    st.session_state['df_resultado'] = None
+    st.session_state['json_resultado'] = None
+    st.session_state['uploader_key'] += 1 
 
 def processar_pdfs_para_csv(lista_de_arquivos_pdf):
 
@@ -119,6 +125,12 @@ def processar_pdfs_para_csv(lista_de_arquivos_pdf):
     barra_progresso.empty()
 
     df_final_combinado = pd.concat(lista_de_dataframes, ignore_index=True)
+
+    cols_numericas = ['subtotal_da_nota', 'total_da_nota', 'icms', 'ipi']
+        
+    for col in cols_numericas:
+        if col in df_final_combinado.columns:
+            df_final_combinado[col] = pd.to_numeric(df_final_combinado[col], errors='coerce').fillna(0.0)
 
     return df_final_combinado, lista_final_jsons
 

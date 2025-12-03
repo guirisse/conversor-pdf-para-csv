@@ -7,6 +7,6 @@ if 'df_resultado' not in st.session_state or st.session_state['df_resultado'] is
 else:
     tab1, tab2 = st.tabs(["Tabela", "JSON"])
     with tab1:
-        st.dataframe(st.session_state['df_resultado'], use_container_width=True)
+        st.dataframe(st.session_state['df_resultado'], width='stretch')
     with tab2:
         st.json(st.session_state['json_resultado'])
