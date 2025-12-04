@@ -64,7 +64,7 @@ def resetar_tudo():
 def processar_pdfs_para_csv(lista_de_arquivos_pdf):
 
     if not lista_de_arquivos_pdf:
-        return None, None, None
+        return None, None
 
     lista_de_dataframes = []      
     lista_final_jsons = [] 
@@ -81,9 +81,11 @@ def processar_pdfs_para_csv(lista_de_arquivos_pdf):
         json_pdf_limpo = limpar_json(json_pdf)   
         dados_json = json.loads(json_pdf_limpo)
 
-        base_calculo = float(dados_json.get('subtotal_da_nota') or 0)
-        val_icms = float(dados_json.get('icms') or 0)
-        val_ipi = float(dados_json.get('ipi') or 0)
+        print(json_pdf_limpo)
+
+        base_calculo = float(dados_json.get('subtotal_da_nota', 0))
+        val_icms = float(dados_json.get('icms', 0))
+        val_ipi = float(dados_json.get('ipi', 0))
 
         dados_json['icms_valido'] = calcular_icms(base_calculo, val_icms)
         dados_json['ipi_valido'] = calcular_ipi(base_calculo, val_ipi)
@@ -131,9 +133,10 @@ def processar_pdfs_para_csv(lista_de_arquivos_pdf):
     for col in cols_numericas:
         if col in df_final_combinado.columns:
             df_final_combinado[col] = pd.to_numeric(df_final_combinado[col], errors='coerce').fillna(0.0)
-
+        
     return df_final_combinado, lista_final_jsons
 
-    return None, None
+
+
 
 

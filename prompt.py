@@ -6,6 +6,26 @@ Entrada: Você receberá um arquivo PDF de uma nota fiscal.
 INSTRUÇOES GERAIS: Você deve processar o arquivo PDF e extrair as informações,
 estruturando-as exatamente como descrito abaixo em formato JSON.
 
+INSTRUÇÕES PARA VALORES MONETÁRIOS:
+    Ao extrair valores monetários, limite a quantidade de casas decimais para 2;
+    Normalize o valor extraído para que utilize apenas um separador decimal, e que seja utilizado nos centavos. O separador utilizado deve ser '.'
+        Exemplos de extração:
+
+            Exemplo 01: 
+               Valor da Nota:  R$ 20.000,00 
+               Neste exemplo, o `subtotal_da_nota` deve ser: 20000.00 
+        Aplique essa lógica para todos os valores monetários extraídos.
+
+INSTRUÇÕES PARA EXTRAÇÃO DE IMPOSTOS IPI E ICMS:
+    Ao extrair as informações da nota fiscal, atente-se aos campos de IPI e ICMS. Se possuir valor numérico neles, mantenha o padrão de extração.
+    Se estiverem zerados, procure pelo corpo da Nota Fiscal alguma descrição de item que contenha o nome do imposto 'ICMS' ou 'IPI' e um valor monetário em seguida.
+        Exemplos de extração:
+
+            Exemplo 1: 
+            `descricao_do_item`: "NOTEBOOK CI7 8GB 2TB 2GB W10 3576-A70C CINZA NA VLR BC-ST RETIDO R$ 2821,85 / VLR ICMS-ST RETIDO R$ 117,42"
+            `ICMS` deve ser: 117.42
+    Se não encontrar um valor, retorne como '0'
+
 CAMPOS A EXTRAIR (Manter a ordem e os nomes exatos):
     'numero_da_nota',
     'emitente',
@@ -35,8 +55,6 @@ em seu inicio (ex: "sra, sr, senhor, dr, etc."), considere apenas o nome.
 *INSTRUÇÕES DE EMITENTE*: NUNCA insira o CNPJ no nome do emitente, apenas o nome da empresa
 
 *UNIDADES* Não incluir unidades nas moedas, exemplos "R$".
-
-*DECIMAIS*: USE "." COMO SEPARADOR DECIMAL DOS VALORES DE MOEDA, CASO ESTEJA COM "," VOCê PRECISA SUBSTITUIR
 
 Se um campo não for encontrado, retorne o valor como null.
 
